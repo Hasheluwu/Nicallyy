@@ -1,0 +1,42 @@
+#dark-mode-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    transition: color 0.3s;
+}
+
+#dark-mode-toggle:hover {
+    color: #f0e68c; /* Light yellow hover color for better visibility */
+}
+
+/* Default light mode */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --navbar-color: #333c87;
+}
+
+/* Dark mode settings */
+.dark-mode {
+    --bg-color: #121212;
+    --text-color: #ffffff;
+    --navbar-color: #1a1a2e;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+nav {
+    background-color: var(--navbar-color);
+    transition: background-color 0.3s;
+}

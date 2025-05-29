@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Website{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+    <link href="../static/styles.css">
+</head>
+
+<body class="bg-gray-100">
+    <!-- Navbar -->
+    <nav style="background-color: #333c87;" class="bg-blue-500 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-white text-lg font-bold"> <i class="fa-solid fa-house"></i> Nically</a>
+
+            <!-- Botón para menú en dispositivos pequeños -->
+            <button id="menu-toggle" class="block md:hidden text-white">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Menú de navegación -->
+            <div id="menu" class="hidden md:flex space-x-4">
+                <a href="/enciclopedia" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                    <i class="fa-solid fa-landmark"></i> Enciclopedia
+                </a>
+                <a href="/achievements" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                    <i class="fa-solid fa-crown"></i> Trofeos
+                </a>
+                <a href="/settings" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                    <i class="fa-solid fa-gear"></i> Ajustes
+                </a>
+                <a href="/user_profile" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                    <i class="fa-solid fa-user"></i> Perfil
+                </a>
+
+                {% if not session.get('user_id') %}
+                <a href="/login" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                    <i class="fa-solid fa-pen-to-square"></i> Login
+                </a>
+                <a href="/register" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                    <i class="fa-solid fa-file"></i> Register
+                </a>
+                {% else %}
+                <a href="/logout" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                    <i class="fa-solid fa-user-minus"></i> Logout
+                </a>
+                <h class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                    <i class="fa-solid fa-cube"></i> Bienvenido {{ username }}
+                </h>
+                {% endif %}
+
+                <button id="dark-mode-toggle" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-4">
+        {% block main %}{% endblock %}
+    </div>
+
+    <script>
+        // Navbar toggle para dispositivos móviles
+        const toggle = document.getElementById('menu-toggle');
+        const menu = document.getElementById('menu');
+        toggle.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Dark mode toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            if ("{{ session.get('dark-mode') }}" === "enabled") {
+                document.documentElement.classList.add('dark-mode');
+            }
+            document.querySelector('#dark-mode-toggle').addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark-mode');
+                fetch('/toggle-dark-mode', { method: 'POST' });
+            });
+        });
+    </script>
+</body>
+</html>

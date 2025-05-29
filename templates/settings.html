@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Ajustes
+{% endblock %}
+
+{% block main %}
+<div class="max-w-2xl mx-4 sm:max-w-sm md:max-w-sm lg:max-w-sm xl:max-w-sm sm:mx-auto md:mx-auto lg:mx-auto xl:mx-auto mt-16 bg-white shadow-xl rounded-lg text-gray-900">
+    <!-- Fondo de imagen -->
+    <div class="rounded-t-lg h-32 overflow-hidden">
+        <img class="object-cover object-top w-full" src='https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ' alt='Settings Background'>
+    </div>
+
+    <!-- Icono principal -->
+    <div class="mx-auto w-32 h-32 relative -mt-16 border-4 border-white rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+        <i class="fa-solid fa-gear text-gray-700 text-5xl"></i>
+    </div>
+
+    <!-- Título -->
+    <div class="text-center mt-4">
+        <h2 class="font-semibold text-2xl">Ajustes</h2>
+        <p class="text-gray-500">Configura tu cuenta</p>
+    </div>
+
+    <!-- Opciones de ajustes -->
+    <ul class="py-4 mt-6 text-gray-700">
+        <!-- Cambiar contraseña -->
+        <li class="p-4 border-t mx-8 mt-2 text-center">
+            <a href="/new_profile" class="w-full block mx-auto rounded-full bg-blue-500 hover:shadow-lg font-semibold text-white px-6 py-2">
+                <i class="fa-solid fa-key mr-2"></i>Modificar datos de usuario
+            </a>
+        </li>
+
+        <!-- Eliminar cuenta -->
+        <li class="p-4 border-t mx-8 mt-2 text-center">
+            <a href="/settings/delete_account" class="w-full block mx-auto rounded-full bg-red-500 hover:shadow-lg font-semibold text-white px-6 py-2">
+                <i class="fa-solid fa-trash mr-2"></i>Eliminar Cuenta
+            </a>
+        </li>
+
+        <!-- Configurar notificaciones -->
+        <li class="p-4 border-t mx-8 mt-2 text-center">
+            <a href="/settings/history" class="w-full block mx-auto rounded-full bg-green-500 hover:shadow-lg font-semibold text-white px-6 py-2">
+                <i class="fa-solid fa-bell mr-2"></i>Ver historial de Trivias
+            </a>
+        </li>
+
+        <!-- Personalizar tema -->
+        <li class="p-4 border-t mx-8 mt-2 text-center">
+            <a href="/reset_progress" class="w-full block mx-auto rounded-full bg-purple-500 hover:shadow-lg font-semibold text-white px-6 py-2">
+                <i class="fa-solid fa-paint-brush mr-2"></i>Elimina historial de trivias.
+            </a>
+        </li>
+    </ul>
+</div>
+{% endblock %}
