@@ -19,7 +19,7 @@
 
             <div id="box">
                 {% for achievement in achievements %}
-                    <a style="color:#FFD700"  href="/achievements">
+                    <a style="color:#FFD700"  href="/achievements" class="flex items-center gap-2 text-white hover:bg-blue-700 px-3 py-2 rounded w-full md:w-auto">
                         <i class="fa-brands fa-web-awesome "></i>
                     </a>
                 {% endfor %}
@@ -33,36 +33,36 @@
             <!-- Menú de navegación -->
             <div id="menu" id="menu" class="hidden flex-col items-start space-y-2 mt-4 md:mt-0 md:flex md:flex-row md:items-center md:space-y-0 md:space-x-4">
 >
-                <a href="/enciclopedia" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                <a href="/enciclopedia" class="flex items-center gap-2 text-white hover:bg-blue-700 px-3 py-2 rounded w-full md:w-auto">
                     <i class="fa-solid fa-landmark"></i> Enciclopedia
                 </a>
-                <a href="/achievements" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                <a href="/achievements" class="flex items-center gap-2 text-white hover:bg-blue-700 px-3 py-2 rounded w-full md:w-auto">
                     <i class="fa-solid fa-crown"></i> Trofeos
                 </a>
-                <a href="/settings" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                <a href="/settings" class="flex items-center gap-2 text-white hover:bg-blue-700 px-3 py-2 rounded w-full md:w-auto">
                     <i class="fa-solid fa-gear"></i> Ajustes
                 </a>
-                <a href="/user_profile" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                <a href="/user_profile" class="flex items-center gap-2 text-white hover:bg-blue-700 px-3 py-2 rounded w-full md:w-auto">
                     <i class="fa-solid fa-user"></i> Perfil
                 </a>
 
                 {% if not session.get('user_id') %}
-                <a href="/login" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                <a href="/login" class="flex items-center gap-2 text-white hover:bg-blue-700 px-3 py-2 rounded w-full md:w-auto">
                     <i class="fa-solid fa-pen-to-square"></i> Login
                 </a>
-                <a href="/register" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                <a href="/register" class="flex items-center gap-2 text-white hover:bg-blue-700 px-3 py-2 rounded w-full md:w-auto">
                     <i class="fa-solid fa-file"></i> Register
                 </a>
                 {% else %}
-                <a href="/logout" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                <a href="/logout" class="flex items-center gap-2 text-white hover:bg-blue-700 px-3 py-2 rounded w-full md:w-auto">
                     <i class="fa-solid fa-user-minus"></i> Logout
                 </a>
-                <h class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                <h class="flex items-center gap-2 text-white hover:bg-blue-700 px-3 py-2 rounded w-full md:w-auto">
                     <i class="fa-solid fa-cube"></i> Bienvenido {{ username }}
                 </h>
                 {% endif %}
 
-                <button id="dark-mode-toggle" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
+                <button id="dark-mode-toggle" class="flex items-center gap-2 text-white hover:bg-blue-700 px-3 py-2 rounded w-full md:w-auto">
                     <i class="fa-solid fa-moon"></i>
                 </button>
             </div>
