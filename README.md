@@ -1,3 +1,5 @@
+*Hize este READ ME cuando apenas empezaba a programar asi que no lo lean.*
+
 # NICALLY
                         #### Video Demo:https://youtu.be/XYmbKW6W1Tc?si=_WwIrYMj2gn8kTbL
                         #### Description:Nically es una pagina educativa de trivias, su enfoque es dar a conocer sobre la cultura Nicaraguense de una forma interactiva y
