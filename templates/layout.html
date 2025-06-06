@@ -15,6 +15,14 @@
         <div class="container mx-auto flex justify-between items-center">
             <a href="/" class="text-white text-lg font-bold"> <i class="fa-solid fa-house"></i> Nically</a>
 
+            <div id="box">
+                {% for achievement in achievements %}
+                    <a style="color:#FFD700"  href="/achievements">
+                        <i class="fa-brands fa-web-awesome "></i>
+                    </a>
+                {% endfor %}
+            </div>
+
             <!-- Botón para menú en dispositivos pequeños -->
             <button id="menu-toggle" class="block md:hidden text-white">
                 <i class="fa-solid fa-bars"></i>
@@ -60,27 +68,31 @@
 
     <!-- Main Content -->
     <div class="container mx-auto p-4">
+
+         {% with messages = get_flashed_messages(with_categories=true) %}
+        
+        {% if messages %}
+        <div class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-10">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+                {% for category, message in messages %}
+                <p class="text-center text-lg font-semibold text-{{ 'green-500' if category == 'success' else 'red-500' }}">
+                    {{ message }}
+                </p>
+                {% endfor %}
+                <button
+                    onclick="this.parentElement.parentElement.classList.add('hidden')"
+                    class="mt-4 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded w-full"
+                >
+                    Cerrar
+                </button>
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+
         {% block main %}{% endblock %}
     </div>
 
-    <script>
-        // Navbar toggle para dispositivos móviles
-        const toggle = document.getElementById('menu-toggle');
-        const menu = document.getElementById('menu');
-        toggle.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-        });
-
-        // Dark mode toggle
-        document.addEventListener('DOMContentLoaded', function () {
-            if ("{{ session.get('dark-mode') }}" === "enabled") {
-                document.documentElement.classList.add('dark-mode');
-            }
-            document.querySelector('#dark-mode-toggle').addEventListener('click', () => {
-                document.documentElement.classList.toggle('dark-mode');
-                fetch('/toggle-dark-mode', { method: 'POST' });
-            });
-        });
-    </script>
+    
 </body>
 </html>

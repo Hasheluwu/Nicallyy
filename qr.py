@@ -22,6 +22,16 @@ for table in tables:
 con.commit()
 print("Tablas limpiadas.")
 
+con.execute("""
+INSERT INTO achievements (achievement_id, title, description) VALUES
+(1, 'Principiante', 'Completaste 1 trivia!'),
+(2, 'Experimentado', 'Completaste 3 trivias!'),
+(3, 'Pinolero!', 'Uwu')
+            
+""") 
+
+con.commit()
+
 # Insertar categorías
 con.execute("""
     INSERT INTO categories (category_id, name) VALUES

@@ -16,7 +16,7 @@
     <!-- Contenedor para la trivia -->
     <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl mx-auto mb-8">
         <p class="text-sm text-gray-500 text-center mb-4">
-            Pregunta {{ question_num }} de {{ total_questions }}
+            Pregunta {{ question_num + 1 }} de {{ total_questions }}
         </p>
         <p id="question-text" class="text-lg font-medium text-center">
             {{ question['question_text'] }}
@@ -32,7 +32,7 @@
 
                 <form
                 method="POST"
-                action="{{ url_for('register_correct_response', trivia_id= trivia['trivia_id'], correct_response_id= respuesta['correct_response_id'],  total_questions = total_questions)}}"
+                action="{{ url_for('register_correct_response', trivia_id= trivia['trivia_id'], correct_response_id= respuesta['correct_response_id'],  total_questions = total_questions, correct_question_id = respuesta['question_id'])}}"
                 >
                     <button
                         type="submit"
@@ -47,7 +47,7 @@
             
             <form
             method="POST"
-            action="{{ url_for('register_response', trivia_id=trivia['trivia_id'])}}"
+            action="{{ url_for('register_response', trivia_id=trivia['trivia_id'], response_id = respuesta['response_id'], question_id = respuesta['question_id'])}}"
             >
             <button
                 type="submit"

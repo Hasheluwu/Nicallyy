@@ -25,71 +25,77 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-# Toggle dark mode
-@app.route("/toggle-dark-mode", methods=["POST"])
-def toggle_dark_mode():
-    if session.get("dark-mode") == "enabled":
-        session["dark-mode"] = "disabled"
-    else:
-        session["dark-mode"] = "enabled"
-    return ("", 204)
+
  
 @app.route("/")
 @require_profile_completion
 def index():
     
     
-    if "user_id" in session:
-        user_id = session["user_id"]
-        print(user_id)
+    if "user_id" in session:      
+        
+        print(f"EL USER ID ACTUAL: {session['user_id']}\n")
         con = get_con_connection()
-        
-        
+
         # ✅ Arreglo: falta fetchone y parámetro como tupla
-        username = con.execute("SELECT username FROM users WHERE id = ?", (user_id,)).fetchone()
-        username = username["username"]
+        username = session["username"]
         
-        print(username)
+        print(f"USERNAME: {username}\n")
 
-        # ✅ Arreglo: usar diccionario y fetchone()
+        # Consulta: contar trivias completadas
         completed_trivias = con.execute(
-            "SELECT COUNT(DISTINCT trivia_id) AS total_completed FROM user_trivias WHERE user_id = :user_id",
-            {"user_id": user_id}
+            "SELECT COUNT(DISTINCT trivia_id) AS total_completed FROM user_trivias WHERE user_id = ?",
+            (session['user_id'],)
         ).fetchone()["total_completed"]
-        
-        print(completed_trivias)
 
+        print(f"LAS TRIVIAS COMPLETADAS: {completed_trivias} \n")
+
+        # Logros que se deben verificar
         achievements_to_check = [
             {"id": 1, "condition": completed_trivias >= 1},
             {"id": 2, "condition": completed_trivias >= 3},
             {"id": 3, "condition": completed_trivias >= 5},
         ]
 
+        # Revisión e inserción de logros
         for achievement in achievements_to_check:
-            # ✅ Arreglo: diccionario con ambos parámetros y fetchone()
             exists = con.execute(
                 """
                 SELECT 1 FROM user_achievements
-                WHERE user_id = :user_id AND achievement_id = :achievement_id
+                WHERE user_id = ? AND achievement_id = ?
                 """,
-                {"user_id": user_id, "achievement_id": achievement["id"]}
+                (session['user_id'], achievement["id"])
             ).fetchone()
 
             if not exists and achievement["condition"]:
                 con.execute(
                     """
                     INSERT INTO user_achievements (user_id, achievement_id)
-                    VALUES (:user_id, :achievement_id)
+                    VALUES (?, ?)
                     """,
-                    {"user_id": user_id, "achievement_id": achievement["id"]}
+                    (session['user_id'], achievement["id"])
                 )
+                
+                con.commit()
+                print(f"Agrego un logro, el logro: {achievement['id']} \n")
 
         # ✅ Arreglo: agregar fetchall()
+        
+        achievements = con.execute("""
+        SELECT DISTINCT achievement_id FROM user_achievements WHERE user_id = ?
+                                   
+                                   
+                                   """, (session['user_id'],)).fetchall()
+        achievements = [dict(row) for row in achievements]
+        print(f"LISTA DE ACHIEVEMENTS OBTENIDOS: {achievements} \n")
+        
+        session['achievements'] = achievements
+        
         categories = con.execute("SELECT * FROM categories").fetchall()
         
         categories_dicts = [dict(row) for row in categories]
         
-        print(categories_dicts)
+        print(f"TODAS LAS CATEGORIAS: {categories_dicts} \n")
         trivias = con.execute(
             """
             SELECT t.trivia_id, t.title, c.name as category_name
@@ -99,71 +105,13 @@ def index():
         ).fetchall()
         
         trivias_dict = [dict(row) for row in trivias]
-        print(trivias_dict)
+        print(f"TODAS LAS TRIVIAS: {trivias_dict} \n")
 
         con.close()
-        return render_template("index.html", categories=categories, trivias=trivias, user_id=user_id, username=username)
+        return render_template("index.html", categories=categories, trivias=trivias, user_id=session['user_id'], username=username, achievements = session['achievements'])
 
     return redirect("/register")
 
-# Main route
-'''@app.route("/")
-def index():
-    if "user_id" in session:
-        user_id = session["user_id"]
-        con = get_con_connection()
-        username = con.execute("SELECT username FROM users WHERE id = ?", user_id)
-        username = username[0]["username"]
-        
-        # Validar logros existentes
-        completed_trivias = con.execute(
-            "SELECT COUNT(DISTINCT trivia_id) AS total_completed FROM user_trivias WHERE user_id = :user_id",
-            user_id=user_id
-        )[0]["total_completed"]
-
-        # Verificar y asignar logros según el progreso
-        achievements_to_check = [
-            {"id": 1, "condition": completed_trivias >= 1},  # Principiante: Completó 1 trivia
-            {"id": 2, "condition": completed_trivias >= 3},  # Uwu: Completó 3 trivias
-            {"id": 3, "condition": completed_trivias >= 5},  # Pinolero: Completó todas las trivias
-        ]
-
-        for achievement in achievements_to_check:
-            # Verificar si ya tiene el logro asignado
-            exists = con.execute(
-                """
-                SELECT 1 FROM user_achievements
-                WHERE user_id = :user_id AND achievement_id = :achievement_id
-                """,
-                user_id=user_id,
-                achievement_id=achievement["id"]
-            )
-            # Si no lo tiene y cumple la condición, agregar el logro
-            if not exists and achievement["condition"]:
-                con.execute(
-                    """
-                    INSERT INTO user_achievements (user_id, achievement_id)
-                    VALUES (:user_id, :achievement_id)
-                    """,
-                    user_id=user_id,
-                    achievement_id=achievement["id"]
-                )
-
-        # Obtener categorías y trivias para mostrar en el index
-        categories = con.execute("SELECT * FROM categories")
-        trivias = con.execute(
-            """
-            SELECT t.trivia_id, t.title, t.image, c.name as category_name
-            FROM trivias t
-            JOIN categories c ON t.category_id = c.category_id
-            """
-        )
-        con.close()
-        return render_template("index.html", categories=categories, trivias=trivias, user_id = user_id, username = username)
-
-    # Redirigir al registro si no hay sesión activa
-    return redirect("/register")
-'''
 
 # User registration
 @app.route("/register", methods=["GET", "POST"])
@@ -171,67 +119,66 @@ def register():
     if request.method == "POST":
         con = get_con_connection()
         gmail = request.form.get("gmail")
-        print("gmail recibido:", repr(gmail))
+        print("gmail recibido:\n", repr(gmail) )
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
 
         if not gmail or not is_valid_email(gmail):
-            print("Correo inválido.")
+            print("Correo inválido.\n")
             return render_template("register.html", error_message="Por favor, introduce un correo electrónico válido.")
         
         existing_user = con.execute("SELECT * FROM users WHERE gmail = ?", (gmail,)).fetchone()
         if existing_user:
-            print("Correo ya registrado.")
+            print("Correo ya registrado.\n")
             con.close()
             return render_template("register.html", error_message="El correo ya está registrado.")
 
         if not is_secure_password(password):
-            print("Contraseña insegura.")
+            print("Contraseña insegura.\n")
             con.close()
             return render_template("register.html", error_message="La contraseña no es segura.")
         
         if password != confirmation:
-            print("Contraseñas no coinciden.")
+            print("Contraseñas no coinciden.\n")
             con.close()
             return render_template("register.html", error_message="Las contraseñas no coinciden.")
         
         password_hash = generate_password_hash(password)
-        print("Insertando en la base de datos...")
+        print("Insertando en la base de datos...\n")
         con.execute("INSERT INTO users (gmail, password) VALUES (?, ?)", (gmail, password_hash,))
         con.commit()
         con.close()
         
-        print("Registro completado, redirigiendo a /login")
+        print("Registro completado, redirigiendo a /login\n")
         
         
         return redirect("/login")
     else:
-        print("Método GET, renderizando formulario.")
+        print("Método GET, renderizando formulario.\n")
         return render_template("register.html")
 
 
 # User login
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == "POST":
-        
+    if request.method == "POST":    
         gmail = request.form.get("gmail")
         password = request.form.get("password")
 
         if not gmail or not password:
             return render_template("login.html", error_message="Debes completar ambos campos.")
            
-        
         con = get_con_connection()
         
         user = con.execute("SELECT * FROM users WHERE gmail = ?", (gmail,)).fetchone()
         if not user or not check_password_hash(user["password"], password):
-            print("Correo o contrasenia incorrectos")
+            print("Correo o contrasenia incorrectos\n")
             con.close()
            
             return render_template("login.html", error_message="Correo o contraseña incorrectos.")
 
         session["user_id"] = user["id"]
+        
         user_id = session["user_id"]
         session.permanent = True
         user_profile_data = con.execute("SELECT username, gender, birthday FROM users WHERE id = ?",
@@ -240,6 +187,10 @@ def login():
         username = user_profile_data["username"]
         gender = user_profile_data["gender"]
         birthday = user_profile_data["birthday"]
+        
+        session["username"] = username
+        session["gender"] = gender
+        session["birthday"] = birthday
     
         con.close()
         if(username and gender and birthday):
@@ -269,6 +220,10 @@ def profile():
         )
         con.commit()
 
+        session["username"] = username
+        
+        print(f"Este sera el username de la session {username}")
+        
         
         
         con.close()
@@ -315,12 +270,10 @@ def user_profile():
 # Trivia gameplay
 
 import random
-
 @app.route("/trivia/<int:trivia_id>")
 @login_required
 def trivia(trivia_id):
 	#1. Desde index obtenemos el dato de trivia_id.
-	  
     con = get_con_connection()
     user_id = session["user_id"]
 
@@ -347,16 +300,7 @@ def trivia(trivia_id):
 
     print(f"Obtenemos el id de la trivia {trivia_id} \n")
     # 5. Obtener preguntas no respondidas correctamente.
-    """Primero seleccionamos todas los datos de la tabla questions (q), en donde su 
-    valor de q.trivia_id sea el de la trivia actual y QUE NO EXISTA EN, la tabla de
-    user_responses (ur) en donde el valor de ur.correct_response_id sea igual al id de
-    q.question_id, esto funciona ya que el id de la respuestas correctas es el mismo
-    al de su pregunta correspondiente.
-     
-    Aqui obtenemos todas las preguntas  en la base de datos, cuya respuesta correcta
-    (que solo puede ser una) no este en la tabla de user_responses, asi asegurando
-    que solo obtenga preguntas que aun no ha respondido el usuario por cada trivia."""
-     
+    
     con = get_con_connection()
     
     unanswered_questions = con.execute("""
@@ -366,14 +310,15 @@ def trivia(trivia_id):
     AND NOT EXISTS (
         SELECT 1
         FROM user_responses ur
-        WHERE ur.user_id = ? AND ur.correct_response_id = q.question_id
+        WHERE ur.user_id = ? AND ur.correct_question_id = q.question_id
     )
-    ORDER BY q.question_id 
+    ORDER BY q.question_id
     """,(trivia_id, user_id,)).fetchall()
     
     unanswered_questions_dicts = [dict(row) for row in unanswered_questions]
     print(f"Obtenemos las preguntas sin obtener {unanswered_questions_dicts} \n")
     con.close()
+    
     #Si entramos a la trivia y no detecta preguntas cuyas respuesta correcta no este
     #en la tabla de user_responses solamente nos dira que ya completamos esta trivia
     #y nos devolvera al lobby principal.
@@ -450,7 +395,7 @@ def trivia(trivia_id):
     
     answered_count = con.execute(
         """
-        SELECT COUNT(*) as count
+        SELECT COUNT(correct_response_id) as count
         FROM user_responses ur
         WHERE ur.user_id = ? AND ur.trivia_id = ?
         """,(
@@ -465,12 +410,13 @@ def trivia(trivia_id):
         print(f"{response} /n")'''
         
     print("THIS IS ALL THE DATA BY ORDER. 1.datos_trivia, 2.question, 3.responses, 4.correct_responses, 5.total_responses, 6.answered_count ,7.lives, 8.unanswered_questions \n")    
-    print(f"{dict(datos_trivia)} \n {dict(question)} \n {responses_dicts} \n {correct_responses_dicts} \n")
-    print(f"{total_responses_dicts} \n {dict(answered_count)} \n {unanswered_questions_dicts}")    
-    print(session["lives"])
+    print(f"datos trivia: {dict(datos_trivia)} \n question:  {dict(question)} \n responses:{responses_dicts} \n correct_responses{correct_responses_dicts} \n")
+    print(f"total responses: {total_responses_dicts} \n answered count: {dict(answered_count)} \n unanswered questions: {unanswered_questions_dicts} \n")    
+    print(f" LIVES {session['lives']}")
     
     template_total_questions = dict(total_questions)
-    print(f"\n {answered_count[0] +1 } \n {template_total_questions}")
+    
+    print(f"\n answered_count: {answered_count[0] +1 } \n total_questions: {template_total_questions}")
     
     total_responses = [dict(response) for response in total_responses]
     
@@ -481,32 +427,45 @@ def trivia(trivia_id):
         responses = responses,
         correct_responses = correct_responses,
         total_responses = total_responses,
-        question_num = answered_count[0] + 1,
+        question_num = answered_count[0],
         total_questions = template_total_questions["total"],
         lives = session["lives"],
         unanswered_questions = unanswered_questions # Enviar las vidas a la plantilla
     )
-
-'''If response["correct_response_id] AND response["correct_response_text]
-        logic
-    else
-        logic'''
-        
-@app.route("/register_response/<int:trivia_id>", methods=["POST"])
+ 
+@app.route("/register_response/<int:trivia_id>/<int:response_id>/<int:question_id>", methods=["POST"])
 @require_profile_completion
-def register_response(trivia_id):
+def register_response(trivia_id,response_id,question_id):
+    user_id = session["user_id"]
+        
+    con = get_con_connection()
+    
+    con.execute(
+        """
+        INSERT INTO user_responses (user_id, trivia_id, response_id,question_id)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT DO NOTHING;
+        """,
+        (user_id, trivia_id, response_id, question_id)
+    )
+    
+    con.commit()
+    
+    con.close()
+    
     session["lives"] -= 1  # Restar una vida
     if session["lives"] <= 0:  # Si las vidas llegan a 0, redirigir al inicio
         flash("Te has quedado sin vidas. ¡Mejor suerte la próxima vez!", "error")
         session.pop("lives", None)  # Reiniciar las vidas al salir
         return redirect("/")
     flash(f"Respuesta incorrecta. Te quedan {session['lives']} vidas.", "error")
+    
     return redirect(f'/trivia/{trivia_id}')
     
 
-@app.route("/register_correct_response/<int:trivia_id>/<int:correct_response_id>/<int:total_questions>", methods=["POST"])
+@app.route("/register_correct_response/<int:trivia_id>/<int:correct_response_id>/<int:total_questions>/<int:correct_question_id>", methods=["POST"])
 @require_profile_completion
-def register_correct_response(trivia_id, correct_response_id, total_questions):
+def register_correct_response(trivia_id, correct_response_id, total_questions, correct_question_id):
     user_id = session["user_id"]
     con = get_con_connection()
     
@@ -517,9 +476,9 @@ def register_correct_response(trivia_id, correct_response_id, total_questions):
     AND NOT EXISTS (
         SELECT 1
         FROM user_responses ur
-        WHERE ur.user_id = ? AND ur.correct_response_id = q.question_id
+        WHERE ur.user_id = ? AND ur.correct_question_id = q.question_id
     )
-    ORDER BY q.question_id 
+    ORDER BY q.question_id
     """,(trivia_id, user_id,)).fetchall()
     
     unanswered_questions_dicts = [dict(row) for row in unanswered_questions]
@@ -532,24 +491,29 @@ def register_correct_response(trivia_id, correct_response_id, total_questions):
     # Registrar respuesta solo si aún no existe un registro para esta respuesta
     con.execute(
         """
-        INSERT INTO user_responses (user_id, trivia_id, correct_response_id)
-        VALUES (?, ?, ?)
+        INSERT INTO user_responses (user_id, trivia_id, correct_response_id, correct_question_id)
+        VALUES (?, ?, ?, ?)
         ON CONFLICT DO NOTHING;
         """,
-        (user_id, trivia_id, correct_response_id,)
+        (user_id, trivia_id, correct_response_id, correct_question_id)
     )
     
     con.commit()
 
-    # Manejo de vidas si la respuesta es incorrecta
-    flash("¡Respuesta correcta! Sigue con la próxima pregunta.", "success")
+    # flash de ganador
+
+    trivia_actual = con.execute("SELECT COUNT(trivia_id) AS FLASH FROM user_trivias WHERE trivia_id = ?", (trivia_id,)).fetchone()
+    trivia_actual = dict(trivia_actual)
+    print(f"CONTEO DE SI YA COMPLETAMOS ESTA TRIVIA VALIDACION FLASH{trivia_actual}")
+    
+    
 
     # Si todas las preguntas fueron respondidas correctamente, registrar como completada
     '''Encuentra todas las ocasiones en donde se encuentre este trivia_id con este usuario_id en la tabla de user_responses
     esto funciona porque todas los registros de preguntas son positivos.'''
     correct_responses_count = con.execute(
         """
-        SELECT COUNT(*) as count
+        SELECT COUNT(correct_response_id) as count
         FROM user_responses ur
         WHERE user_id = ? AND trivia_id = ?
         
@@ -570,9 +534,13 @@ def register_correct_response(trivia_id, correct_response_id, total_questions):
         )
         con.commit()
         
+        con.close()
         flash("¡Felicidades, completaste la trivia con todas las respuestas correctas!", "success")
         session.pop("lives", None)  # Reiniciar vidas tras completar la trivia
         return redirect("/")
+
+    if trivia_actual['FLASH'] == 0:
+        flash("¡Respuesta correcta! Sigue con la próxima pregunta.", "success")
     
     return redirect(f'/trivia/{trivia_id}')
 
@@ -592,7 +560,7 @@ def logout():
 @app.route("/enciclopedia")
 def wiki():
     if "user_id" in session:
-        return render_template("enciclopedia.html")
+        return render_template("enciclopedia.html", username = session['username'])
     return redirect("/login")
 
 
@@ -613,7 +581,7 @@ def trophy():
 
         
         con.close()
-        return render_template("achievements.html", achievements=user_achievements)
+        return render_template("achievements.html", achievements=user_achievements, username = session['username'])
      return redirect("/")
 
 
@@ -623,7 +591,7 @@ def trophy():
 def settings():
     if "user_id" in session:
 
-        return render_template("settings.html")
+        return render_template("settings.html", username = session['username'])
     return redirect("/login")
 
 
@@ -635,12 +603,24 @@ def reset_progress():
 
     # Eliminar datos de progreso
     con = get_con_connection()
+    
+    history = con.execute("SELECT * FROM user_responses, user_trivias, user_achievements WHERE user_responses.user_id = ?", (user_id,)).fetchall()
+    
+    history_check = [dict(row) for row in history]
+    
     con.execute("DELETE  FROM user_responses WHERE user_id = ?", (user_id,))
     con.execute("DELETE  FROM user_trivias WHERE user_id = ?", (user_id,))
     con.execute("DELETE  FROM user_achievements WHERE user_id = ?", (user_id,))
 
     con.commit()
-    flash("Progreso de trivias eliminado", "success")
+    
+    print(f"AHHH MIRA WEON: {history_check}")
+    if history_check == []:
+        flash("No tienes ningun progreso aun.", "error")
+        
+    elif history_check != []:
+        flash("Progreso de trivias eliminado", "success")
+        
     con.close()
     return redirect("/settings")
 
@@ -652,7 +632,7 @@ def trivia_history():
 
     # Consultar el historial de trivias con preguntas y respuestas
     con = get_con_connection()
-    history = con.execute("""
+    correct_history = con.execute("""
         SELECT t.title, q.question_text, cr.correct_response_text
         FROM user_responses ur
         JOIN correct_responses cr ON ur.correct_response_id = cr.correct_response_id
@@ -661,11 +641,25 @@ def trivia_history():
         WHERE ur.user_id = ?
     """, (user_id,)).fetchall()
     
-    history_dicts = [dict(row) for row in history]
-    print(f"Obtenemos las preguntas sin obtener {history_dicts} \n")
+    incorrect_history = con.execute("""
+        SELECT t.title, q.question_text, r.response_text
+        FROM user_responses ur
+        JOIN responses r ON ur.response_id = r.response_id
+        JOIN questions q ON r.question_id = q.question_id
+        JOIN trivias t ON q.trivia_id = t.trivia_id
+        WHERE ur.user_id = ?
+    """, (user_id,)).fetchall()
     
+    correct_history_dicts = [dict(row) for row in correct_history]
+    incorrect_history_dicts =[dict(row) for row in incorrect_history]
+    
+    print(f"historial correcto {correct_history_dicts} \n")
+    print(f"historial incorrecto {incorrect_history_dicts} \n")
+    
+    histories = correct_history + incorrect_history
+    histories =  [dict(history) for history in histories]
     con.close()
-    return render_template("trivia_history.html", history=history)
+    return render_template("trivia_history.html", histories = histories, username = session['username'])
 
 
 
@@ -705,5 +699,5 @@ def newprofile():
         con.execute("UPDATE users SET username = ?, gender = ?, birthday = ? WHERE id = ?",
                     (username, gender, birthday, session)["user_id"])
         con.close()
-        return render_template("settings.html")
+        return render_template("settings.html", username = session['username'])
     return render_template("profile.html", current_date=current_date)
