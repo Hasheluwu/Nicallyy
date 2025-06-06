@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Trivia - {{ trivia.title if trivia else "Juego" }}{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Encabezado de Trivia -->
+    <header class="bg-blue-500 text-white py-4 px-6">
+        <div class="container mx-auto flex items-center justify-between">
+            <h1 class="text-xl font-semibold">{{ trivia.title if trivia else "Trivias" }}</h1>
+            <a href="/" class="text-sm underline hover:text-gray-300">Regresar al Inicio</a>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 flex justify-center items-center py-8">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        
+        {% if messages %}
+        <div class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+                {% for category, message in messages %}
+                <p class="text-center text-lg font-semibold text-{{ 'green-500' if category == 'success' else 'red-500' }}">
+                    {{ message }}
+                </p>
+                {% endfor %}
+                <button
+                    onclick="this.parentElement.parentElement.classList.add('hidden')"
+                    class="mt-4 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded w-full"
+                >
+                    Cerrar
+                </button>
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}
+        
+        {% endblock %}
+    </main>
+
+    <footer class="bg-gray-100 text-center py-4 text-sm text-gray-500">
+        &copy; {{ current_year }} Trivias Nicaragüenses
+    </footer>
+</body>
+
+
+</html>

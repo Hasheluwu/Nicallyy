@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Historial de Trivias
+{% endblock %}
+
+{% block main %}
+<div class="max-w-3xl mx-auto mt-12 bg-white shadow-xl rounded-lg p-6">
+    <!-- Título -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Historial de Trivias</h1>
+        <p class="text-gray-500 dark:text-gray-400">Revisa tus intentos y respuestas anteriores</p>
+    </div>
+
+    <!-- Contenedor de historial de trivias -->
+    <div class="space-y-8">
+    {% if histories %}
+        {% for entry in histories %}
+            {% if "correct_response_text" in entry %}
+                <div class="bg-white p-6 rounded-lg shadow-md dark:bg-gray-800 dark:border dark:border-gray-700">
+                    <div class="text-center">
+                        <!-- Título de la trivia -->
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{{ entry.title }}</h2>
+
+                        <!-- Pregunta y respuesta -->
+                        <div class="text-left">
+                            <p class="text-gray-700 dark:text-gray-300 mb-2">
+                                <strong>Pregunta:</strong> {{ entry.question_text }}
+                            </p>
+                            <p class="text-gray-700 dark:text-gray-300 mb-2">
+                                <strong>Tu respuesta:</strong> {{ entry.correct_response_text }}
+                            </p>
+                            <p class="text-gray-700 dark:text-gray-300">
+                                <strong>Resultado:</strong>
+                        
+                                    <span class="text-green-500 font-bold">Correcta</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            {% elif "response_text" in entry %}
+
+               <div class="bg-white p-6 rounded-lg shadow-md dark:bg-gray-800 dark:border dark:border-gray-700">
+                    <div class="text-center">
+                        <!-- Título de la trivia -->
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">{{ entry.title }}</h2>
+
+                        <!-- Pregunta y respuesta -->
+                        <div class="text-left">
+                            <p class="text-gray-700 dark:text-gray-300 mb-2">
+                                <strong>Pregunta:</strong> {{ entry.question_text }}
+                            </p>
+                            <p class="text-gray-700 dark:text-gray-300 mb-2">
+                                <strong>Tu respuesta:</strong> {{ entry.response_text }}
+                            </p>
+                            <p class="text-gray-700 dark:text-gray-300">
+                                <strong>Resultado:</strong>
+                        
+                                    <span class="text-red-500 font-bold">Incorrecta</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+    
+
+
+
+
+        <!-- Línea divisoria entre los registros -->
+        {% if not loop.last %}
+        <div class="py4">
+            <div class="h-2 my-8 py-0.5" style="background-color: #333c87;"></div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    {% else %}
+        
+        <h1 style="color: #333c87;" class=" text-center text-1xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl">No has respondido ninguna pregunta!</span></h1>
+        
+    {% endif %}
+    </div>
+</div>
+{% endblock %}
