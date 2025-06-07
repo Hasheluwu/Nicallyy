@@ -8,12 +8,13 @@
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Encabezado de Trivia -->
-    <header class="bg-blue-500 text-white py-4 px-6">
-        <div class="container mx-auto flex items-center justify-between">
-            <h1 class="text-xl font-semibold">{{ trivia.title if trivia else "Trivias" }}</h1>
-            <a href="/" class="text-sm underline hover:text-gray-300">Regresar al Inicio</a>
-        </div>
-    </header>
+   <header class="bg-blue-500 text-white py-4 px-6">
+    <div class="container mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
+        <h1 class="text-base sm:text-xl font-semibold">{{ trivia.title if trivia else "Trivias" }}</h1>
+        <a href="/" class="text-xs sm:text-sm underline hover:text-gray-300">Regresar al Inicio</a>
+    </div>
+</header>
+
 
     <!-- Contenido Principal -->
     <main class="flex-1 flex justify-center items-center py-8">
