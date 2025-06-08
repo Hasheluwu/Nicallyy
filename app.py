@@ -25,12 +25,21 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+def toggle_dark_mode():
+    if 'dark_mode' not in session:
+        session['dark_mode'] = False
+
+    session['dark_mode'] = not session['dark_mode']
+    return ('', 204)  # Sin contenido
 
  
+@app.route("/prueba")
+def prueba():
+    return render_template("prueba.html")
+
 @app.route("/")
 @require_profile_completion
 def index():
-    
     
     if "user_id" in session:      
         

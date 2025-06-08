@@ -5,6 +5,15 @@
    gap: 1em;
 }
 
+
+.imagen {
+    mask-image: linear-gradient(
+        white 70%,
+        transparent
+    );
+
+}
+
 .dark-body {
     background-color: #252424; /* bg-gray-800 de Tailwind */
 }
