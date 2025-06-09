@@ -10,12 +10,16 @@
 "">
     {% for category in categories %}
     <div class="space-y-10">
-        <h2 class="text-center text-2xl sm:text-3xl font-semibold mb-6">{{ category.name }}</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+        <h2 class="text-center text-2xl sm:text-3xl font-semibold mb-6  {{ 'text-white' if dark_mode else 'text-gray-900' }} ">{{ category.name }}</h2>
+        <div class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
             {% for trivia in trivias if trivia.category_name == category.name %}
-            <div class="flex flex-col items-center space-y-6">
-                <h3 class="text-lg sm:text-xl font-semibold text-center">{{ trivia.title }}</h3>
-                <div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md h-auto flex flex-col justify-center items-center space-y-4">
+            <div class="relative flex flex-col items-center space-y-6">
+                <h3 class="text-lg sm:text-xl font-semibold text-center  {{ 'text-white' if dark_mode else 'text-gray-900' }}">{{ trivia.title }}</h3>
+                <div class="z-10 relative bg-white rounded-lg border-gray-700 shadow-lg p-4 w-full max-w-md h-auto flex flex-col justify-center items-center space-y-4 {% if dark_mode %}
+                z-2 p-4 sm:p-6 md:p-8 lg:p-10 space-y-4 md:space-y-6 bg-gray-800 
+            {% else %}
+                z-2 p-4 sm:p-6 md:p-8 lg:p-10 space-y-4 md:space-y-6 bg-white
+            {% endif %}">
                     <img  src="/static/lynx.png" alt="Imagen de trivia" class="w-full h-auto rounded-lg">
                     <a href="/trivia/{{ trivia.trivia_id }}"
                        class="text-white py-2 px-4 rounded bg-blue-500 hover:bg-blue-600 transition w-full text-center">
@@ -29,7 +33,7 @@
 
     <!-- Línea divisoria que recorre toda la página -->
     {% if not loop.last %}
-    <div class="h-2 my-8 py-2" style="background-color: #333c87;"></div>
+     <div class="relative  w-screen h-2 z-50   my-8 py-2" style="background-color: #333c87;"></div>
     {% endif %}
     {% endfor %}
 </div>

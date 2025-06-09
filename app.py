@@ -124,7 +124,7 @@ def index():
         print(f"\n {imagen_noche}")
         
         con.close()
-        return render_template("index.html",  categories=categories, trivias=trivias, user_id=session['user_id'], username=username, achievements = session['achievements'])
+        return render_template("index.html",  imagen_dia=imagen_dia,  imagen_noche=imagen_noche, categories=categories, trivias=trivias, user_id=session['user_id'], username=username, achievements = session['achievements'])
 
     return redirect("/register")
 
