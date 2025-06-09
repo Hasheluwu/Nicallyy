@@ -1,7 +1,13 @@
 {% extends "layout.html" %}
 {% block title %}Trivia{% endblock %}
 {% block main %}
-<div class="container mx-auto mt-8 px-4 md:px-16 space-y-15">
+<div class="container mx-auto mt-8 px-4 md:px-16 space-y-15 class="
+    {% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}
+"">
     {% for category in categories %}
     <div class="space-y-10">
         <h2 class="text-center text-2xl sm:text-3xl font-semibold mb-6">{{ category.name }}</h2>

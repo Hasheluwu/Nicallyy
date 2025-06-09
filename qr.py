@@ -16,11 +16,27 @@ print("Conexion a la base de datos")
 
 # Limpiar tablas existentes
 tables = ["user_responses", "user_trivias", "responses", "correct_responses",
-          "questions", "trivias", "categories", "trivia_images"]
+          "questions", "trivias", "categories", "trivia_images", "images"]
 for table in tables:
     con.execute(f"DELETE FROM {table};")
 con.commit()
 print("Tablas limpiadas.")
+
+
+con.execute("""
+INSERT INTO images (image, image_id, horario) VALUES
+('/static/dia1.jpg',1,1),
+('/static/dia2.jpg',2,1),    
+('/static/dia3.jpg',3,1),     
+('/static/dia4.jpg',4,1),     
+('/static/dia5.jpg',5,1),     
+('/static/dia6.jpg',6,1),    
+('/static/noche1.jpg',1,0),
+('/static/noche2.jpg',2,0),
+('/static/noche3.jpg',3,0),
+('/static/noche4.jpg',4,0),
+('/static/noche5.jpg',5,0)
+            """)
 
 con.execute("""
 INSERT INTO achievements (achievement_id, title, description) VALUES

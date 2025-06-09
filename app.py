@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from flask import Flask, flash, redirect, render_template, request, session, url_for
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import login_required, is_valid_email, is_secure_password,require_profile_completion,get_con_connection
@@ -25,14 +25,15 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-def toggle_dark_mode():
-    if 'dark_mode' not in session:
-        session['dark_mode'] = False
-
-    session['dark_mode'] = not session['dark_mode']
-    return ('', 204)  # Sin contenido
-
  
+
+@app.route('/toggle-dark-mode', methods=['POST'])
+def toggle_dark_mode():
+    current = session.get('dark_mode', False)
+    session['dark_mode'] = not current
+    return ('', 204)  # No content, pero confirma éxito
+
+
 @app.route("/prueba")
 def prueba():
     return render_template("prueba.html")
@@ -116,8 +117,14 @@ def index():
         trivias_dict = [dict(row) for row in trivias]
         print(f"TODAS LAS TRIVIAS: {trivias_dict} \n")
 
+        imagen_dia = get_random_image(1)
+        imagen_noche = get_random_image(0)
+        
+        print(f"\n {imagen_dia}")
+        print(f"\n {imagen_noche}")
+        
         con.close()
-        return render_template("index.html", categories=categories, trivias=trivias, user_id=session['user_id'], username=username, achievements = session['achievements'])
+        return render_template("index.html",  categories=categories, trivias=trivias, user_id=session['user_id'], username=username, achievements = session['achievements'])
 
     return redirect("/register")
 
@@ -125,6 +132,12 @@ def index():
 # User registration
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    imagen_dia = get_random_image(1)
+    imagen_noche = get_random_image(0)
+        
+    print(f"\n {imagen_dia}")
+    print(f"\n {imagen_noche}")
+    
     if request.method == "POST":
         con = get_con_connection()
         gmail = request.form.get("gmail")
@@ -134,23 +147,23 @@ def register():
 
         if not gmail or not is_valid_email(gmail):
             print("Correo inválido.\n")
-            return render_template("register.html", error_message="Por favor, introduce un correo electrónico válido.")
+            return render_template("register.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche, error_message="Por favor, introduce un correo electrónico válido.")
         
         existing_user = con.execute("SELECT * FROM users WHERE gmail = ?", (gmail,)).fetchone()
         if existing_user:
             print("Correo ya registrado.\n")
             con.close()
-            return render_template("register.html", error_message="El correo ya está registrado.")
+            return render_template("register.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche, error_message="El correo ya está registrado.")
 
         if not is_secure_password(password):
             print("Contraseña insegura.\n")
             con.close()
-            return render_template("register.html", error_message="La contraseña no es segura.")
+            return render_template("register.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche , error_message="La contraseña no es segura.")
         
         if password != confirmation:
             print("Contraseñas no coinciden.\n")
             con.close()
-            return render_template("register.html", error_message="Las contraseñas no coinciden.")
+            return render_template("register.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche ,  error_message="Las contraseñas no coinciden.")
         
         password_hash = generate_password_hash(password)
         print("Insertando en la base de datos...\n")
@@ -164,18 +177,24 @@ def register():
         return redirect("/login")
     else:
         print("Método GET, renderizando formulario.\n")
-        return render_template("register.html")
+        return render_template("register.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche)
 
 
 # User login
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    imagen_dia = get_random_image(1)
+    imagen_noche = get_random_image(0)
+        
+    print(f"\n {imagen_dia}")
+    print(f"\n {imagen_noche}")
+    
     if request.method == "POST":    
         gmail = request.form.get("gmail")
         password = request.form.get("password")
 
         if not gmail or not password:
-            return render_template("login.html", error_message="Debes completar ambos campos.")
+            return render_template("login.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche ,  error_message="Debes completar ambos campos.")
            
         con = get_con_connection()
         
@@ -184,7 +203,7 @@ def login():
             print("Correo o contrasenia incorrectos\n")
             con.close()
            
-            return render_template("login.html", error_message="Correo o contraseña incorrectos.")
+            return render_template("login.html", error_message="Correo o contraseña incorrectos." ,imagen_dia = imagen_dia, imagen_noche = imagen_noche)
 
         session["user_id"] = user["id"]
         
@@ -205,12 +224,18 @@ def login():
         if(username and gender and birthday):
             return redirect("/")
         return redirect("/profile")
-    return render_template("login.html")
+    return render_template("login.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche )
 
 # User profile
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
+    imagen_dia = get_random_image(1)
+    imagen_noche = get_random_image(0)
+        
+    print(f"\n {imagen_dia}")
+    print(f"\n {imagen_noche}")
+    
     current_date = datetime.now().strftime('%Y-%m-%d')
     if request.method == "POST":
         username = request.form.get("username")
@@ -218,7 +243,7 @@ def profile():
         birthday = request.form.get("birthday")
 
         if not username or not gender or not birthday or birthday > current_date:
-            return render_template("profile.html", error_message="Datos inválidos.",
+            return render_template("profile.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche , error_message="Datos inválidos.",
                                    current_date=current_date)
             
         con = get_con_connection()
@@ -237,12 +262,18 @@ def profile():
         
         con.close()
         return redirect("/")
-    return render_template("profile.html", current_date=current_date)
+    return render_template("profile.html", current_date=current_date, imagen_dia = imagen_dia, imagen_noche = imagen_noche)
 
 
 @app.route("/user_profile", methods=["GET"])
 @require_profile_completion
 def user_profile():
+    imagen_dia = get_random_image(1)
+    imagen_noche = get_random_image(0)
+        
+    print(f"\n {imagen_dia}")
+    print(f"\n {imagen_noche}")
+    
     user_id = session["user_id"]
     print(user_id)
 
@@ -273,7 +304,8 @@ def user_profile():
         username=username,
         genre=gender,
         birthday=birthday,
-        achievements=achievements
+        achievements=achievements,
+        imagen_dia = imagen_dia, imagen_noche = imagen_noche
     )
     
 # Trivia gameplay
@@ -568,14 +600,28 @@ def logout():
 # Additional routes (Wiki, Trophy, Settings)
 @app.route("/enciclopedia")
 def wiki():
+    imagen_dia = get_random_image(1)
+    imagen_noche = get_random_image(0)
+        
+    print(f"\n {imagen_dia}")
+    print(f"\n {imagen_noche}")
+    
+    
     if "user_id" in session:
-        return render_template("enciclopedia.html", username = session['username'])
+        return render_template("enciclopedia.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche, username = session['username'])
     return redirect("/login")
 
 
 @app.route("/achievements")
 @require_profile_completion
 def trophy():
+    
+     imagen_dia = get_random_image(1)
+     imagen_noche = get_random_image(0)
+        
+     print(f"\n {imagen_dia}")
+     print(f"\n {imagen_noche}")
+     
      if "user_id" in session:
         # Obtener los logros desbloqueados por el usuario
         con = get_con_connection()
@@ -590,7 +636,7 @@ def trophy():
 
         
         con.close()
-        return render_template("achievements.html", achievements=user_achievements, username = session['username'])
+        return render_template("achievements.html",imagen_dia = imagen_dia, imagen_noche = imagen_noche, achievements=user_achievements, username = session['username'])
      return redirect("/")
 
 
@@ -598,9 +644,16 @@ def trophy():
 @app.route("/settings")
 @require_profile_completion
 def settings():
+    imagen_dia = get_random_image(1)
+    imagen_noche = get_random_image(0)
+        
+    print(f"\n {imagen_dia}")
+    print(f"\n {imagen_noche}")
+     
+    
     if "user_id" in session:
 
-        return render_template("settings.html", username = session['username'])
+        return render_template("settings.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche, username = session['username'])
     return redirect("/login")
 
 
@@ -637,6 +690,12 @@ def reset_progress():
 @app.route("/settings/history", methods=["GET"])
 @require_profile_completion
 def trivia_history():
+    imagen_dia = get_random_image(1)
+    imagen_noche = get_random_image(0)
+        
+    print(f"\n {imagen_dia}")
+    print(f"\n {imagen_noche}")
+     
     user_id = session["user_id"]
 
     # Consultar el historial de trivias con preguntas y respuestas
@@ -668,13 +727,14 @@ def trivia_history():
     histories = correct_history + incorrect_history
     histories =  [dict(history) for history in histories]
     con.close()
-    return render_template("trivia_history.html", histories = histories, username = session['username'])
+    return render_template("trivia_history.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche,histories = histories, username = session['username'])
 
 
 
 @app.route("/settings/delete_account", methods=["GET"])
 @require_profile_completion
 def delete_account():
+    
     user_id = session["user_id"]
 
     # Eliminar datos relacionados con el usuario
@@ -696,6 +756,12 @@ def delete_account():
 @require_profile_completion
 
 def newprofile():
+    imagen_dia = get_random_image(1)
+    imagen_noche = get_random_image(0)
+        
+    print(f"\n {imagen_dia}")
+    print(f"\n {imagen_noche}")
+    
     current_date = datetime.now().strftime('%Y-%m-%d')
     if request.method == "POST":
         username = request.form.get("username")
@@ -703,10 +769,29 @@ def newprofile():
         birthday = request.form.get("birthday")
 
         if not username or not gender or not birthday or birthday > current_date:
-            return render_template("profile.html", error_message="Datos inválidos.", current_date=current_date)
+            return render_template("profile.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche, error_message="Datos inválidos.", current_date=current_date)
         con = get_con_connection()
         con.execute("UPDATE users SET username = ?, gender = ?, birthday = ? WHERE id = ?",
                     (username, gender, birthday, session)["user_id"])
         con.close()
-        return render_template("settings.html", username = session['username'])
-    return render_template("profile.html", current_date=current_date)
+        return render_template("settings.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche, username = session['username'])
+    return render_template("profile.html", imagen_dia = imagen_dia, imagen_noche = imagen_noche,  current_date=current_date)
+
+@app.context_processor
+def inject_dark_mode():
+    return dict(dark_mode=session.get('dark_mode', False))
+
+def get_random_image(horario):
+    con = get_con_connection()
+
+    # Traer todas las imágenes según si es día (1) o noche (0)
+    rows = con.execute("SELECT image FROM images WHERE horario = ?", (horario,)).fetchall()
+    
+
+    # Convertir a lista de diccionarios
+    imagenes = [dict(row) for row in rows]
+
+    # Escoger una imagen aleatoria si hay disponibles
+    if imagenes:
+        return random.choice(imagenes)['image']
+    return None

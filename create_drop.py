@@ -74,6 +74,7 @@ CREATE TABLE trivias (
 CREATE TABLE images (
   image text,
   image_id integer,
+  horario integer,
   PRIMARY KEY (image)
 );
 
