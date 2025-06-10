@@ -22,9 +22,9 @@
         <div class="absolute inset-0 -z-1 pointer-events-none">
 
             {% if dark_mode %}
-            <img class=" imagen_noche w-full h-full object-cover" src="{{imagen_noche}}" >
+            <img rel="preload" as="image" class=" imagen_noche w-full h-full object-cover" src="{{imagen_noche}}" >
             {% else %}
-              <img class=" imagen w-full h-full object-cover" src="{{imagen_dia}}">
+              <img rel="preload" as="image" class=" imagen w-full h-full object-cover" src="{{imagen_dia}}">
             {% endif %}
             
             
