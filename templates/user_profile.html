@@ -5,7 +5,12 @@
 {% endblock %}
 
 {% block main %}
-<div class="max-w-2xl mx-4 sm:max-w-sm md:max-w-sm lg:max-w-sm xl:max-w-sm sm:mx-auto md:mx-auto lg:mx-auto xl:mx-auto mt-16 bg-white shadow-xl rounded-lg text-gray-900">
+<div class="relative max-w-2xl mx-4 sm:max-w-sm md:max-w-sm lg:max-w-sm xl:max-w-sm sm:mx-auto md:mx-auto lg:mx-auto xl:mx-auto mt-16 bg-white shadow-xl rounded-lg text-gray-900 {% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}
+">
     <!-- Fondo de imagen -->
     <div class="rounded-t-lg h-32 overflow-hidden">
         <img class="object-cover object-top w-full" src='https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ' alt='Mountain'>
@@ -17,10 +22,10 @@
     </div>
 
     <!-- Información del usuario -->
-    <div class="text-center mt-2">
-        <h2 class="font-semibold {{ 'text-white' if dark_mode else 'text-gray-900' }}">{{ username }}</h2>
-        <p class="font-semibold {{ 'text-white' if dark_mode else 'text-gray-900' }}">{{ genre }}</p>
-        <p class="font-semibold {{ 'text-white' if dark_mode else 'text-gray-900' }}">{{ birthday }}</p>
+    <div class="text-center mt-4">
+        <h2 class=" mt-2 font-semibold {{ 'text-white' if dark_mode else 'text-gray-900' }}">{{ username }}</h2>
+        <p class=" mt-2 font-semibold {{ 'text-white' if dark_mode else 'text-gray-900' }}">{{ genre }}</p>
+        <p class=" mt-2 font-semibold {{ 'text-white' if dark_mode else 'text-gray-900' }}">{{ birthday }}</p>
     </div>
 
     <!-- Logros -->
@@ -30,14 +35,14 @@
                 <svg style="color:#FFD700" class="w-4 fill-current text-blue-900" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                 </svg>
-                <div>{{ achievement.title }}</div>
+                <div class ="{{ 'text-white' if dark_mode else 'text-black' }}"  >{{ achievement.title }}</div>
             </li>
         {% endfor %}
     </ul>
 
     <!-- Botón de acción -->
-    <div class="p-4 border-t mx-8 mt-2">
-        <a href="/profile" class="w-1/2 block mx-auto rounded-full bg-gray-900 hover:shadow-lg font-semibold {{ 'text-white' if dark_mode else 'text-gray-900' }} px-6 py-2">Editar perfil</a>
+    <div class="p-4 border-t text-center  mt-2">
+        <a href="/profile" class="w-1/2 block mx-auto rounded-full {{ 'text-black' if dark_mode else 'text-white' }}   {{ 'bg-white' if dark_mode else 'bg-gray-900'  }}  hover:shadow-lg font-semibold  px-6 py-2">Editar perfil</a>
     </div>
 </div>
 {% endblock %}

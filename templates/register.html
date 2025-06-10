@@ -11,25 +11,31 @@
     {% else %}
         bg-white
     {% endif %}
-" >>
-    {% if error_message %}
-                    <div class="z-10 items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
-                        <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                        </svg>
-                        <span class="sr-only">Error</span>
-                        <div>
-                            <span class="font-medium">¡Error!</span> {{ error_message }}
-                        </div>
-                    </div>
-                {% endif %}
+" >
+  {% if error_message %}
+<div id="error-alert"
+     class="z-10 animate-fade-in-down flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg 
+            bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
+     role="alert">
+    <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+         fill="currentColor" viewBox="0 0 20 20">
+        <path
+            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+    </svg>
+    <span class="sr-only">Error</span>
+    <div>
+        <span class="ml-2 font-medium">¡Error!</span> {{ error_message }}
+    </div>
+</div>
+{% endif %}
+
     <div class="flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 lg:px-10 py-8 sm:py-12 md:py-16 mx-auto md:h-screen lg:py-0">
         <div class="w-full bg-white rounded-lg shadow dark:border sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl dark:bg-gray-800 dark:border-gray-700">
-            <div style="opacity: 0.5;"
+            <div 
      class="{% if dark_mode %}
-                z-2 p-4 sm:p-6 md:p-8 lg:p-10 space-y-4 md:space-y-6 bg-gray-900 
+                relative bg-opacity-20 p-4 sm:p-6 md:p-8 lg:p-10 space-y-4 md:space-y-6 bg-gray-900 
             {% else %}
-                z-2 p-4 sm:p-6 md:p-8 lg:p-10 space-y-4 md:space-y-6 bg-white
+               relative bg-opacity-20  z-2 p-4 sm:p-6 md:p-8 lg:p-10 space-y-4 md:space-y-6 bg-white
             {% endif %}">
                 <h1 class="text-lg sm:text-xl md:text-2xl font-bold leading-tight tracking-tight  text-center
            {{ 'text-white' if dark_mode else 'text-gray-900' }}">

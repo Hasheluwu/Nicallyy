@@ -24,18 +24,43 @@ print("Tablas limpiadas.")
 
 
 con.execute("""
-INSERT INTO images (image, image_id, horario) VALUES
-('/static/dia1.jpg',1,1),
-('/static/dia2.jpg',2,1),    
-('/static/dia3.jpg',3,1),     
-('/static/dia4.jpg',4,1),     
-('/static/dia5.jpg',5,1),     
-('/static/dia6.jpg',6,1),    
-('/static/noche1.jpg',1,0),
-('/static/noche2.jpg',2,0),
-('/static/noche3.jpg',3,0),
-('/static/noche4.jpg',4,0),
-('/static/noche5.jpg',5,0)
+INSERT INTO images (image, image_id, horario,grande) VALUES
+('/static/imagen_dia1.jpg',1,1,0),
+('/static/imagen_dia2.jpg',2,1,0),    
+('/static/imagen_dia3.jpg',3,1,0),     
+('/static/imagen_dia4.jpg',4,1,0),     
+('/static/imagen_dia5.jpg',5,1,0),     
+('/static/imagen_dia6.jpg',6,1,0),    
+('/static/imagen_dia7.jpg',7,1,0),
+('/static/imagen_dia8.jpg',8,1,0),     
+('/static/imagen_dia9.jpg',9,1,0),     
+('/static/imagen_dia10.jpg',10,1,0),    
+('/static/imagen_dia11.jpg',11,1,0),
+
+('/static/imagen_noche1.jpg',12,0,0),
+('/static/imagen_noche2.jpg',13,0,0),
+('/static/imagen_noche3.jpg',14,0,0),
+('/static/imagen_noche4.jpg',15,0,0),
+('/static/imagen_noche5.jpg',16,0,0),
+
+('/static/imagen_dia_grande1.jpg',17,1,1),
+('/static/imagen_dia_grande2.jpg',18,1,1),
+('/static/imagen_dia_grande3.jpg',19,1,1),
+('/static/imagen_dia_grande4.jpg',20,1,1),
+('/static/imagen_dia_grande5.jpg',21,1,1),
+('/static/imagen_dia_grande6.jpg',22,1,1),
+('/static/imagen_dia_grande7.jpg',23,1,1),
+('/static/imagen_dia_grande8.jpg',24,1,1),
+
+
+('/static/imagen_noche_grande1.jpg',25,0,1),    
+('/static/imagen_noche_grande2.jpg',26,0,1),    
+('/static/imagen_noche_grande3.jpg',27,0,1),    
+('/static/imagen_noche_grande4.jpg',28,0,1),    
+('/static/imagen_noche_grande5.jpg',29,0,1),    
+('/static/imagen_noche_grande6.jpg',30,0,1),    
+('/static/imagen_noche_grande7.jpg',31,0,1)  
+
             """)
 
 con.execute("""

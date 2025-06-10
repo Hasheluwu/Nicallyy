@@ -1,21 +1,21 @@
 {% extends "layout.html" %}
 {% block title %}Trivia{% endblock %}
 {% block main %}
-<div class="container mx-auto mt-8 px-4 md:px-16 space-y-15 class="
+<div class=" relative bg-opacity-20  container mx-auto mt-8 px-4 md:px-16 space-y-15
     {% if dark_mode %}
         bg-gray-900
     {% else %}
         bg-white
     {% endif %}
-"">
+">
     {% for category in categories %}
-    <div class="space-y-10">
+    <div class="relative bg-opacity-50 relative space-y-10">
         <h2 class="text-center text-2xl sm:text-3xl font-semibold mb-6  {{ 'text-white' if dark_mode else 'text-gray-900' }} ">{{ category.name }}</h2>
         <div class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
             {% for trivia in trivias if trivia.category_name == category.name %}
-            <div class="relative flex flex-col items-center space-y-6">
+            <div class="bg-opacity-50 relative flex flex-col items-center space-y-6">
                 <h3 class="text-lg sm:text-xl font-semibold text-center  {{ 'text-white' if dark_mode else 'text-gray-900' }}">{{ trivia.title }}</h3>
-                <div class="z-10 relative bg-white rounded-lg border-gray-700 shadow-lg p-4 w-full max-w-md h-auto flex flex-col justify-center items-center space-y-4 {% if dark_mode %}
+                <div class=" z-10 relative bg-white rounded-lg border-gray-700 shadow-lg p-4 w-full max-w-md h-auto flex flex-col justify-center items-center space-y-4 {% if dark_mode %}
                 z-2 p-4 sm:p-6 md:p-8 lg:p-10 space-y-4 md:space-y-6 bg-gray-800 
             {% else %}
                 z-2 p-4 sm:p-6 md:p-8 lg:p-10 space-y-4 md:space-y-6 bg-white

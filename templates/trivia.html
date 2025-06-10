@@ -1,30 +1,50 @@
 {% extends "trivia_layout.html" %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-16" id="trivia-container">
+<div class=" {% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}  bg-opacity-50 relative container mx-auto px-4 py-16" id="trivia-container">
     <!-- Encabezado con título y vidas -->
-    <div class="flex items-center justify-between mb-6 relative sm:min-h-0">
+    <div class="{% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %} bg-opacity-10  flex items-center justify-between mb-6 relative sm:min-h-0">
         <div class="absolute left-1/2 transform -translate-x-1/2">
-            <h2 class="text-3xl font-semibold text-center">{{ trivia['title'] }}</h2>
+            <h2 class="text-3xl font-semibold {{ 'text-white' if dark_mode else 'text-gray-900' }} text-center">{{ trivia['title'] }}</h2>
         </div>
-        <div class="ml-auto bg-red-100 text-red-800 text-sm font-bold px-4 py-2 rounded shadow-lg">
+        <div class="{% if dark_mode %}
+        bg-red-300
+    {% else %}
+        bg-red-200
+    {% endif %} ml-auto text-red-800 text-sm font-bold px-4 py-2 rounded shadow-lg">
             Lives: {{ lives }}
             
         </div>
     </div>
     
     <!-- Contenedor para la trivia -->
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl mx-auto mb-8">
-        <p class="text-sm text-gray-500 text-center mb-4">
+    <div class="{% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}  rounded-lg shadow-lg p-6 w-full max-w-4xl mx-auto mb-8">
+        <p class="text-sm {{ 'text-white' if dark_mode else 'text-gray-900' }}  text-center mb-4">
             Pregunta {{ question_num + 1 }} de {{ total_questions }}
         </p>
-        <p id="question-text" class="text-lg font-medium text-center">
+        <p id="question-text" class="text-lg font-medium {{ 'text-white' if dark_mode else 'text-gray-900' }} text-center">
             {{ question['question_text'] }}
         </p>
     </div>
 
     <!-- Contenedor para las respuestas -->
-    <div class="bg-gray-100 rounded-lg shadow-md p-6 w-full max-w-4xl mx-auto">
+    <div class="{% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %} rounded-lg shadow-md p-6 w-full max-w-4xl mx-auto">
         {% for respuesta in total_responses %}
         
             
@@ -37,7 +57,7 @@
                     <button
                         type="submit"
                         id="button"
-                        class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded w-full trivia-button"
+                        class="{{ 'bg-blue-700' if dark_mode else 'bg-blue-600' }}  hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 {{ 'border-blue-900' if dark_mode else 'border-blue-800' }} {{ 'hover:border-blue-600' if dark_mode else 'hover:border-blue-600' }} rounded w-full trivia-button"
                     >
                     {{respuesta['correct_response_text']}}
                     </button>
@@ -52,7 +72,7 @@
             <button
                 type="submit"
                 id="button"
-                class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded w-full trivia-button"
+                class="{{ 'bg-blue-700' if dark_mode else 'bg-blue-600' }}  hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 {{ 'border-blue-900' if dark_mode else 'border-blue-800' }} {{ 'hover:border-blue-600' if dark_mode else 'hover:border-blue-600' }} rounded w-full trivia-button"
             >
                 {{ respuesta['response_text'] }}
             </button>

@@ -8,7 +8,7 @@
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Encabezado de Trivia -->
-   <header class="bg-blue-500 text-white py-4 px-6">
+   <header class="{{ 'bg-blue-600' if dark_mode else 'bg-blue-500' }}  text-white py-4 px-6">
     <div class="container mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
         <h1 class="text-base sm:text-xl font-semibold">{{ trivia.title if trivia else "Trivias" }}</h1>
         <a href="/" class="text-xs sm:text-sm underline hover:text-gray-300">Regresar al Inicio</a>
@@ -17,34 +17,79 @@
 
 
     <!-- Contenido Principal -->
-    <main class="flex-1 flex justify-center items-center py-8">
-        {% with messages = get_flashed_messages(with_categories=true) %}
+    <main class=" relative  flex-1 flex justify-center items-center py-8">
+
+        <div class="absolute inset-0 -z-1 pointer-events-none">
+
+            {% if dark_mode %}
+            <img class=" imagen_noche w-full h-full object-cover" src="{{imagen_noche}}" >
+            {% else %}
+              <img class=" imagen w-full h-full object-cover" src="{{imagen_dia}}">
+            {% endif %}
+            
+            
         
-        {% if messages %}
-        <div class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
-                {% for category, message in messages %}
-                <p class="text-center text-lg font-semibold text-{{ 'green-500' if category == 'success' else 'red-500' }}">
-                    {{ message }}
-                </p>
-                {% endfor %}
-                <button
-                    onclick="this.parentElement.parentElement.classList.add('hidden')"
-                    class="mt-4 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded w-full"
-                >
-                    Cerrar
-                </button>
-            </div>
         </div>
-        {% endif %}
-        {% endwith %}
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="flash-overlay" class="z-[9999] fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center transition-opacity duration-500 opacity-0 pointer-events-none">
+        <div id="flash-box" class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg scale-95 opacity-0 transition-all duration-500 transform">
+            {% for category, message in messages %}
+            <p class="text-center text-lg font-semibold text-{{ 'green-500' if category == 'success' else 'red-500' }}">
+                {{ message }}
+            </p>
+            {% endfor %}
+            <button
+                onclick="cerrarFlash()"
+                class="mt-4 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded w-full"
+            >
+                Cerrar
+            </button>
+        </div>
+    </div>
+    <script>
+        // Mostrar con animación al cargar
+        window.addEventListener("DOMContentLoaded", () => {
+            const overlay = document.getElementById("flash-overlay");
+            const box = document.getElementById("flash-box");
+
+            overlay.classList.remove("opacity-0", "pointer-events-none");
+            overlay.classList.add("opacity-100");
+
+            box.classList.remove("opacity-0", "scale-95");
+            box.classList.add("opacity-100", "scale-100");
+        });
+
+        // Ocultar con animación
+        function cerrarFlash() {
+            const overlay = document.getElementById("flash-overlay");
+            const box = document.getElementById("flash-box");
+
+            overlay.classList.remove("opacity-100");
+            overlay.classList.add("opacity-0", "pointer-events-none");
+
+            box.classList.remove("opacity-100", "scale-100");
+            box.classList.add("opacity-0", "scale-95");
+
+            // Oculta totalmente después de la animación (500ms)
+            setTimeout(() => overlay.classList.add("hidden"), 500);
+        }
+    </script>
+    {% endif %}
+{% endwith %}
+
 
         {% block content %}
         
         {% endblock %}
     </main>
 
-    <footer class="bg-gray-100 text-center py-4 text-sm text-gray-500">
+    <footer class="{% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}  text-center py-4 text-sm {{ 'text-white' if dark_mode else 'text-gray-900' }}">
         &copy; {{ current_year }} Trivias Nicaragüenses
     </footer>
 </body>

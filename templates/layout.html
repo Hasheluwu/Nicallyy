@@ -1,12 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+  if (localStorage.getItem("dark-mode") === "true") {
+    document.documentElement.classList.add("dark");
+  }
+
+</script>
+
+<style>
+  html { visibility: hidden; }
+</style>
+<script>
+  if (localStorage.getItem("dark-mode") === "true") {
+    document.documentElement.classList.add("dark");
+  }
+  document.documentElement.style.visibility = "visible";
+</script>
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Website{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
     <link href="../static/styles.css" rel="stylesheet">
+
+
+
+    <style>
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.4s ease-out forwards;
+}
+
+.animate-fade-out-up {
+  animation: fadeOutUp 0.4s ease-in forwards;
+}
+</style>
+
 </head>
 
 <body class="
@@ -99,26 +152,36 @@
 
           
 
-         {% with messages = get_flashed_messages(with_categories=true) %}
-        
-        {% if messages %}
-        <div class="inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-10">
-            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
-                {% for category, message in messages %}
-                <p class="z-10 text-lg font-semibold text-{{ 'green-500' if category == 'success' else 'red-500' }}">
-                    {{ message }}
-                </p>
-                {% endfor %}
-                <button
-                    onclick="this.parentElement.parentElement.classList.add('hidden')"
-                    class="mt-4 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded w-full"
-                >
-                    Cerrar
-                </button>
-            </div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="alert-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50 animate-fade-in-down">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+            {% for category, message in messages %}
+            <p class="text-lg text-center font-semibold text-{{ 'green-500' if category == 'success' else 'red-500' }}">
+                {{ message }}
+            </p>
+            {% endfor %}
+            <button
+                onclick="cerrarAlerta()"
+                class="mt-4 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded w-full"
+            >
+                Cerrar
+            </button>
         </div>
-        {% endif %}
-        {% endwith %}
+    </div>
+
+    <script>
+    function cerrarAlerta() {
+        const alerta = document.getElementById('alert-modal');
+        alerta.classList.remove('animate-fade-in-down');
+        alerta.classList.add('animate-fade-out-up');
+        setTimeout(() => alerta.classList.add('hidden'), 400);
+    }
+    </script>
+    {% endif %}
+{% endwith %}
+
+
 
         {% block main %}{% endblock %}
     </div>
@@ -152,3 +215,4 @@ document.getElementById("dark-mode-toggle").addEventListener("click", async () =
         if (alert) alert.remove();
     }, 5000);
 </script>
+

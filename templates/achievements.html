@@ -1,14 +1,28 @@
 {% extends "layout.html" %}
 {% block title %}Mis Logros{% endblock %}
 {% block main %}
-<div class="container mx-auto mt-8 px-4 sm:px-6 lg:px-8 space-y-10">
+<div  class="  bg-opacity-50 relative container mx-auto mt-8 px-4 sm:px-6 lg:px-8 space-y-10 {% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}
+">
     <h2 class="text-center text-2xl sm:text-3xl font-semibold mb-8  {{ 'text-white' if dark_mode else 'text-gray-900' }} ">Mis Logros</h2>
 
     {% if achievements %}
     <!-- Grid de logros -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div  class="bg-opacity-10 {% if dark_mode %}
+                relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 bg-gray-900
+            {% else %}
+                 relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 bg-white
+            {% endif %}">
         {% for achievement in achievements %}
-        <div class="flex flex-col items-center bg-white shadow-lg rounded-lg p-6 space-y-4 hover:shadow-xl transition">
+        <div class="relative flex flex-col items-center bg-white shadow-lg rounded-lg p-6 space-y-4 hover:shadow-xl transition {% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}
+">
             <h3 class="text-lg sm:text-xl font-bold text-blue-600 text-center">{{ achievement.title }}</h3>
             <p class=" text-center  {{ 'text-white' if dark_mode else 'text-gray-900' }}">{{ achievement.description }}</p>
         </div>

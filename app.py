@@ -117,8 +117,8 @@ def index():
         trivias_dict = [dict(row) for row in trivias]
         print(f"TODAS LAS TRIVIAS: {trivias_dict} \n")
 
-        imagen_dia = get_random_image(1)
-        imagen_noche = get_random_image(0)
+        imagen_dia = get_random_image(1,1)
+        imagen_noche = get_random_image(0,1)
         
         print(f"\n {imagen_dia}")
         print(f"\n {imagen_noche}")
@@ -132,8 +132,8 @@ def index():
 # User registration
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    imagen_dia = get_random_image(1)
-    imagen_noche = get_random_image(0)
+    imagen_dia = get_random_image(1,0)
+    imagen_noche = get_random_image(0,0)
         
     print(f"\n {imagen_dia}")
     print(f"\n {imagen_noche}")
@@ -183,8 +183,8 @@ def register():
 # User login
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    imagen_dia = get_random_image(1)
-    imagen_noche = get_random_image(0)
+    imagen_dia = get_random_image(1,0)
+    imagen_noche = get_random_image(0,0)
         
     print(f"\n {imagen_dia}")
     print(f"\n {imagen_noche}")
@@ -230,8 +230,8 @@ def login():
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
-    imagen_dia = get_random_image(1)
-    imagen_noche = get_random_image(0)
+    imagen_dia = get_random_image(1,0)
+    imagen_noche = get_random_image(0,0)
         
     print(f"\n {imagen_dia}")
     print(f"\n {imagen_noche}")
@@ -268,8 +268,8 @@ def profile():
 @app.route("/user_profile", methods=["GET"])
 @require_profile_completion
 def user_profile():
-    imagen_dia = get_random_image(1)
-    imagen_noche = get_random_image(0)
+    imagen_dia = get_random_image(1,1)
+    imagen_noche = get_random_image(0,1)
         
     print(f"\n {imagen_dia}")
     print(f"\n {imagen_noche}")
@@ -317,6 +317,16 @@ def trivia(trivia_id):
 	#1. Desde index obtenemos el dato de trivia_id.
     con = get_con_connection()
     user_id = session["user_id"]
+    
+    try:
+        imagen_dia
+        imagen_noche
+    except NameError:
+        imagen_dia = get_random_image(1,0)
+        imagen_noche = get_random_image(0,0)
+
+    print(f"\n {imagen_dia}")
+    print(f"\n {imagen_noche}")
 
     # 2. Inicializar vidas en la sesión si no existen
     if "lives" not in session:
@@ -471,7 +481,9 @@ def trivia(trivia_id):
         question_num = answered_count[0],
         total_questions = template_total_questions["total"],
         lives = session["lives"],
-        unanswered_questions = unanswered_questions # Enviar las vidas a la plantilla
+        unanswered_questions = unanswered_questions, # Enviar las vidas a la plantilla
+        imagen_dia = imagen_dia,
+        imagen_noche = imagen_noche
     )
  
 @app.route("/register_response/<int:trivia_id>/<int:response_id>/<int:question_id>", methods=["POST"])
@@ -600,8 +612,8 @@ def logout():
 # Additional routes (Wiki, Trophy, Settings)
 @app.route("/enciclopedia")
 def wiki():
-    imagen_dia = get_random_image(1)
-    imagen_noche = get_random_image(0)
+    imagen_dia = get_random_image(1,1)
+    imagen_noche = get_random_image(0,1)
         
     print(f"\n {imagen_dia}")
     print(f"\n {imagen_noche}")
@@ -616,8 +628,8 @@ def wiki():
 @require_profile_completion
 def trophy():
     
-     imagen_dia = get_random_image(1)
-     imagen_noche = get_random_image(0)
+     imagen_dia = get_random_image(1,0)
+     imagen_noche = get_random_image(0,0)
         
      print(f"\n {imagen_dia}")
      print(f"\n {imagen_noche}")
@@ -644,8 +656,8 @@ def trophy():
 @app.route("/settings")
 @require_profile_completion
 def settings():
-    imagen_dia = get_random_image(1)
-    imagen_noche = get_random_image(0)
+    imagen_dia = get_random_image(1,1)
+    imagen_noche = get_random_image(0,1)
         
     print(f"\n {imagen_dia}")
     print(f"\n {imagen_noche}")
@@ -690,8 +702,8 @@ def reset_progress():
 @app.route("/settings/history", methods=["GET"])
 @require_profile_completion
 def trivia_history():
-    imagen_dia = get_random_image(1)
-    imagen_noche = get_random_image(0)
+    imagen_dia = get_random_image(1,1)
+    imagen_noche = get_random_image(0,1)
         
     print(f"\n {imagen_dia}")
     print(f"\n {imagen_noche}")
@@ -756,8 +768,8 @@ def delete_account():
 @require_profile_completion
 
 def newprofile():
-    imagen_dia = get_random_image(1)
-    imagen_noche = get_random_image(0)
+    imagen_dia = get_random_image(1,0)
+    imagen_noche = get_random_image(0,0)
         
     print(f"\n {imagen_dia}")
     print(f"\n {imagen_noche}")
@@ -781,12 +793,14 @@ def newprofile():
 def inject_dark_mode():
     return dict(dark_mode=session.get('dark_mode', False))
 
-def get_random_image(horario):
+def get_random_image(horario, grande):
     con = get_con_connection()
 
-    # Traer todas las imágenes según si es día (1) o noche (0)
-    rows = con.execute("SELECT image FROM images WHERE horario = ?", (horario,)).fetchall()
-    
+    # Traer todas las imágenes que coincidan con el horario y el tamaño
+    rows = con.execute(
+        "SELECT image FROM images WHERE horario = ? AND grande = ?", 
+        (horario, grande)
+    ).fetchall()
 
     # Convertir a lista de diccionarios
     imagenes = [dict(row) for row in rows]

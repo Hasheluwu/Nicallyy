@@ -75,6 +75,7 @@ CREATE TABLE images (
   image text,
   image_id integer,
   horario integer,
+  grande integer,
   PRIMARY KEY (image)
 );
 

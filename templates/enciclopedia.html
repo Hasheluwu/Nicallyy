@@ -5,15 +5,23 @@
 {% endblock %}
 
 {% block main %}
-<div class="container mx-auto mt-8 px-4 sm:px-6 lg:px-8 py-8 bg-gray-100 space-y-12">
+<div class="{% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}  bg-opacity-10 relative container mx-auto mt-8 px-4 sm:px-6 lg:px-8 py-8 bg-gray-100 space-y-12">
     <!-- Título principal -->
     <div class="text-center mb-8">
         <h1 class="text-3xl sm:text-4xl font-extrabold text-indigo-700 drop-shadow-lg   ">Enciclopedia</h1>
-        <p class="text-gray-600 text-lg mt-2  {{ 'text-white' if dark_mode else 'text-gray-900' }} ">Descubre la historia, tradiciones, arte, gastronomía y cultura general de Nicaragua</p>
+        <p class="text-lg mt-2  {{ 'text-white' if dark_mode else 'text-gray-900' }} ">Descubre la historia, tradiciones, arte, gastronomía y cultura general de Nicaragua</p>
     </div>
 
     <!-- Cultura General -->
-    <section id="cultura-general" class="bg-white shadow-lg rounded-lg p-6 space-y-4 border-l-4 border-indigo-500">
+    <section id="cultura-general" class="{% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}  shadow-lg rounded-lg p-6 space-y-4 border-l-4 border-indigo-500">
         <h2 class="text-2xl sm:text-3xl font-bold text-indigo-600 mb-4">Cultura General de Nicaragua</h2>
         <div class="space-y-4 text-gray-700 leading-relaxed text-justify">
             <p class="indent-4  {{ 'text-white' if dark_mode else 'text-gray-900' }}  {{ 'text-white' if dark_mode else 'text-gray-900' }}">
@@ -26,7 +34,11 @@
     </section>
 
     <!-- Historia -->
-    <section id="historia" class="bg-white shadow-lg rounded-lg p-6 space-y-4 border-l-4 border-green-500">
+    <section id="historia" class="{% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}  shadow-lg rounded-lg p-6 space-y-4 border-l-4 border-green-500">
         <h2 class="text-2xl sm:text-3xl font-bold text-green-600 mb-4">Historia de Nicaragua</h2>
         <div class="space-y-4 text-gray-700 leading-relaxed text-justify">
             <p class="indent-4  {{ 'text-white' if dark_mode else 'text-gray-900' }}">
@@ -41,7 +53,11 @@ La geografía también ha jugado un papel importante en la historia de Nicaragua
     </section>
 
     <!-- Gastronomía -->
-    <section id="gastronomia" class="bg-white shadow-lg rounded-lg p-6 space-y-4 border-l-4 border-yellow-500">
+    <section id="gastronomia" class=" {% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}  shadow-lg rounded-lg p-6 space-y-4 border-l-4 border-yellow-500">
         <h2 class="text-2xl sm:text-3xl font-bold text-yellow-600 mb-4">Gastronomía Nicaragüense</h2>
         <div class="space-y-4 text-gray-700 leading-relaxed text-justify">
             <p class="indent-4  {{ 'text-white' if dark_mode else 'text-gray-900' }}">
@@ -56,7 +72,11 @@ La geografía también ha jugado un papel importante en la historia de Nicaragua
     </section>
 
     <!-- Arte -->
-    <section id="arte" class="bg-white shadow-lg rounded-lg p-6 space-y-4 border-l-4 border-red-500">
+    <section id="arte" class=" {% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %}  shadow-lg rounded-lg p-6 space-y-4 border-l-4 border-red-500">
         <h2 class="text-2xl sm:text-3xl font-bold text-red-600 mb-4">Arte de Nicaragua</h2>
         <div class="space-y-4 text-gray-700 leading-relaxed text-justify">
             <p class="indent-4  {{ 'text-white' if dark_mode else 'text-gray-900' }}">
@@ -71,7 +91,11 @@ La geografía también ha jugado un papel importante en la historia de Nicaragua
     </section>
 
     <!-- Tradiciones -->
-    <section id="tradiciones" class="bg-white shadow-lg rounded-lg p-6 space-y-4 border-l-4 border-blue-500">
+    <section id="tradiciones" class="{% if dark_mode %}
+        bg-gray-900
+    {% else %}
+        bg-white
+    {% endif %} shadow-lg rounded-lg p-6 space-y-4 border-l-4 border-blue-500">
         <h2 class="text-2xl sm:text-3xl font-bold text-blue-600 mb-4">Tradiciones de Nicaragua</h2>
         <div class="space-y-4 text-gray-700 leading-relaxed text-justify">
             <p class="indent-4  {{ 'text-white' if dark_mode else 'text-gray-900' }}">
