@@ -33,41 +33,41 @@ def toggle_dark_mode():
     session['dark_mode'] = not current
     return ('', 204)  # No content, pero confirma éxito
 
-
-@app.route("/prueba")
-def prueba():
-    return render_template("prueba.html")
-
 @app.route("/")
 @require_profile_completion
-def index():
-    
+def index():    
     if "user_id" in session:      
         
-        print(f"EL USER ID ACTUAL: {session['user_id']}\n")
+        # Just debugging.
+        print(f"EL USER ID ACTUAL:{session['user_id']}\n")
+        
+        # We start the database connection
         con = get_con_connection()
 
-        # ✅ Arreglo: falta fetchone y parámetro como tupla
+        # Just debugging.
         username = session["username"]
-        
         print(f"USERNAME: {username}\n")
 
-        # Consulta: contar trivias completadas
+        # Count of completed trivias of the current user.
         completed_trivias = con.execute(
             "SELECT COUNT(DISTINCT trivia_id) AS total_completed FROM user_trivias WHERE user_id = ?",
             (session['user_id'],)
         ).fetchone()["total_completed"]
 
+        # Just debugging.
         print(f"LAS TRIVIAS COMPLETADAS: {completed_trivias} \n")
 
-        # Logros que se deben verificar
+        # Dictionary with the achievements of the page.
         achievements_to_check = [
             {"id": 1, "condition": completed_trivias >= 1},
             {"id": 2, "condition": completed_trivias >= 3},
             {"id": 3, "condition": completed_trivias >= 5},
         ]
 
-        # Revisión e inserción de logros
+
+        '''It checks on the user_achievement table if the current user has
+        the current id of the iteration of achievements_to_check dictionary''' 
+        
         for achievement in achievements_to_check:
             exists = con.execute(
                 """
@@ -77,6 +77,10 @@ def index():
                 (session['user_id'], achievement["id"])
             ).fetchone()
 
+            '''Check the case when the trivia_id isn't on the user_achievement table
+            But the condition is valid, then it inserts the user_id and achievement_id in
+            the user_achievement table'''
+            
             if not exists and achievement["condition"]:
                 con.execute(
                     """
@@ -85,27 +89,32 @@ def index():
                     """,
                     (session['user_id'], achievement["id"])
                 )
-                
                 con.commit()
                 print(f"Agrego un logro, el logro: {achievement['id']} \n")
-
-        # ✅ Arreglo: agregar fetchall()
         
+        '''It creates a list of sqlite3.Row elements with all the achievements
+        of the current user.'''
         achievements = con.execute("""
         SELECT DISTINCT achievement_id FROM user_achievements WHERE user_id = ?
-                                   
-                                   
                                    """, (session['user_id'],)).fetchall()
+        
+        #we turn the sqlite3.Row elements into a list of dictionaries
         achievements = [dict(row) for row in achievements]
         print(f"LISTA DE ACHIEVEMENTS OBTENIDOS: {achievements} \n")
         
+        #we assign the current session achievements
         session['achievements'] = achievements
         
+        #It creates a list of sqlite3.Row elements with all the categories.
         categories = con.execute("SELECT * FROM categories").fetchall()
         
+        #we turn the sqlite3.Row elements into a list of dictionaries
         categories_dicts = [dict(row) for row in categories]
         
+        #Just debugging
         print(f"TODAS LAS CATEGORIAS: {categories_dicts} \n")
+        
+        #It creates a list of sqlite3.Row elements with all the trivias
         trivias = con.execute(
             """
             SELECT t.trivia_id, t.title, c.name as category_name
@@ -114,24 +123,32 @@ def index():
             """
         ).fetchall()
         
+        #we turn the sqlite3.Row elements into a list of dictionaries
         trivias_dict = [dict(row) for row in trivias]
         print(f"TODAS LAS TRIVIAS: {trivias_dict} \n")
 
+        #We use the function get_random_image to get a random day and night image for background.
         imagen_dia = get_random_image(1,1)
-        imagen_noche = get_random_image(0,1)
-        
+        imagen_noche = get_random_image(0,1)      
         print(f"\n {imagen_dia}")
         print(f"\n {imagen_noche}")
         
+        #we close the database connection
         con.close()
-        return render_template("index.html",  imagen_dia=imagen_dia,  imagen_noche=imagen_noche, categories=categories, trivias=trivias, user_id=session['user_id'], username=username, achievements = session['achievements'])
+        
+        #we render the index.html template with all the information
+        return render_template("index.html",  imagen_dia=imagen_dia,
+                               imagen_noche=imagen_noche, categories=categories,
+                               trivias=trivias, user_id=session['user_id'],
+                               username=username, achievements = session['achievements'])
 
+    #if there isn't a user_id in session we just send them to register.
     return redirect("/register")
-
 
 # User registration
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    #We use the function get_random_image to get a random day and night image for background.
     imagen_dia = get_random_image(1,0)
     imagen_noche = get_random_image(0,0)
         
